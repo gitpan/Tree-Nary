@@ -1,12 +1,12 @@
 #####################################################################################
-# $Id: Nary.pm,v 1.2 2001/08/14 16:20:00 soriano Exp $
+# $Id: Nary.pm,v 1.21 2001/09/24 08:14:00 soriano Exp $
 #####################################################################################
 #
 # Tree::Nary
 #
 # Author: Frederic Soriano <frederic.soriano@alcatel.fr>
-# RCS Revision: $Revision: 1.2 $
-# Date: $Date: 2001/08/14 16:20:00 $
+# RCS Revision: $Revision: 1.21 $
+# Date: $Date: 2001/09/24 08:14:00 $
 #
 #####################################################################################
 #
@@ -23,7 +23,7 @@ require Exporter;
 
 @ISA = qw(Exporter);
 
-$VERSION = '1.1';
+$VERSION = '1.21';
 
 use strict;
 use vars qw($TRUE $FALSE);

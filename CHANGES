@@ -28,6 +28,10 @@ Revision history for Perl extension Tree::Nary.
 	  Many thanks to Dan Frankowski (dfrankowski@netperceptions.com)
 	  for his fixes.
 
+1.21	24 Sep 2001
+
+	- Fixed typo in documentation.
+
 -----------------------------------------------------------------------------
 + == additions
 - == fixes
