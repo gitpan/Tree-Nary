@@ -19,6 +19,15 @@ Revision history for Perl extension Tree::Nary.
 
 	- Fixed "perl -w" warnings.
 
+1.2	14 Aug 2001
+
+	- Fixed insertion methods which did not return refs 
+	  back to inserted node.
+	- Fixed test.pl to test existence of such refs.
+
+	  Many thanks to Dan Frankowski (dfrankowski@netperceptions.com)
+	  for his fixes.
+
 -----------------------------------------------------------------------------
 + == additions
 - == fixes

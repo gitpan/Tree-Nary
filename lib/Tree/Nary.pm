@@ -1,12 +1,12 @@
 #####################################################################################
-# $Id: Nary.pm,v 1.1 2001/03/13 10:35:00 soriano Exp $
+# $Id: Nary.pm,v 1.2 2001/08/14 16:20:00 soriano Exp $
 #####################################################################################
 #
 # Tree::Nary
 #
 # Author: Frederic Soriano <frederic.soriano@alcatel.fr>
-# RCS Revision: $Revision: 1.1 $
-# Date: $Date: 2001/03/13 10:35:00 $
+# RCS Revision: $Revision: 1.2 $
+# Date: $Date: 2001/08/14 16:20:00 $
 #
 #####################################################################################
 #
@@ -594,8 +594,7 @@ sub insert_data() {
 
 	my ($self, $parent, $position, $data) = (shift, shift, shift, shift);
 
-	$self->insert($parent, $position, $self->new($data));
-	return;
+	return($self->insert($parent, $position, $self->new($data)));
 }
 
 # Inserts a new node before the given sibling.
@@ -603,8 +602,7 @@ sub insert_data_before() {
 
 	my ($self, $parent, $sibling, $data) = (shift, shift, shift, shift);
 
-	$self->insert_before($parent, $sibling, $self->new($data));
-	return;
+	return($self->insert_before($parent, $sibling, $self->new($data)));
 }
 
 # Inserts a node as the last child of the given parent.
@@ -612,8 +610,7 @@ sub append() {
 
 	my ($self, $parent, $node) = (shift, shift, shift);
 
-	$self->insert_before($parent, undef, $node);
-	return;
+	return($self->insert_before($parent, undef, $node));
 }
 
 # Inserts a new node as the first child of the given parent.
@@ -621,8 +618,7 @@ sub append_data() {
 
 	my ($self, $parent, $data) = (shift, shift, shift);
 
-	$self->insert_before($parent, undef, $self->new($data));
-	return;
+	return($self->insert_before($parent, undef, $self->new($data)));
 }
 
 # Inserts a node as the first child of the given parent.
@@ -642,8 +638,7 @@ sub prepend_data() {
 
 	my ($self, $parent, $data) = (shift, shift, shift);
 
-	$self->prepend($parent, $self->new($data));
-	return;
+	return($self->prepend($parent, $self->new($data)));
 }
 
 #
