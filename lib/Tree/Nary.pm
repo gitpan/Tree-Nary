@@ -1,12 +1,12 @@
 #####################################################################################
-# $Id: Nary.pm,v 1.02 2001/02/14 13:22:00 soriano Exp $
+# $Id: Nary.pm,v 1.1 2001/03/13 10:35:00 soriano Exp $
 #####################################################################################
 #
 # Tree::Nary
 #
 # Author: Frederic Soriano <frederic.soriano@alcatel.fr>
-# RCS Revision: $Revision: 1.02 $
-# Date: $Date: 2001/02/14 13:22:00 $
+# RCS Revision: $Revision: 1.1 $
+# Date: $Date: 2001/03/13 10:35:00 $
 #
 #####################################################################################
 #
@@ -23,7 +23,7 @@ require Exporter;
 
 @ISA = qw(Exporter);
 
-$VERSION = '1.02';
+$VERSION = '1.1';
 
 use strict;
 use vars qw($TRUE $FALSE);
@@ -155,7 +155,7 @@ sub is_root() {
 
 	my ($self, $node) = (shift, shift);
 
-	return(($node->{parent} == undef) && ($node->{prev} == undef) && ($node->{next} == undef));
+	return(!defined($node->{parent}) && !defined($node->{prev}) && !defined($node->{next}));
 }
 
 # Returns TRUE if the given node is a leaf node.
@@ -163,7 +163,7 @@ sub is_leaf() {
 
 	my ($self, $node) = (shift, shift);
 
-	return($node->{children} == undef);
+	return(!defined($node->{children}));
 }
 
 # Returns TRUE if $node is an ancestor of $descendant.
@@ -180,7 +180,7 @@ sub is_ancestor() {
 	}
 
 	while(defined($descendant)) {
-		if($descendant->{parent} == $node) {
+		if(defined($descendant->{parent}) && ($descendant->{parent} == $node)) {
 			return($TRUE);
 		}
 
@@ -253,6 +253,10 @@ sub max_height() {
 	my $child = $self->new();
 	my $max_height = 0;
 
+	# <Deep recursion on subroutine "Tree::Nary::max_height">
+	#   can be safely ignored.
+	local $^W = 0;
+
 	if(!defined($root)) {
 		return(0);
 	}
@@ -307,7 +311,7 @@ sub child_position() {
 	if(!defined($child)) {
 		return(-1);
 	}
-	if(!($child->{parent} == $node)) {
+	if(defined($child->{parent}) && !($child->{parent} == $node)) {
 		return(-1);
 	}
 
@@ -406,6 +410,10 @@ sub last_sibling() {
 sub _count_func() {
 
 	my ($self, $node, $flags, $nref) = (shift, shift, shift, shift);
+
+	# <Deep recursion on subroutine "Tree::Nary::_count_func"> warnings
+	#   can be safely ignored.
+	local $^W = 0;
 
 	if(defined($node->{children})) {
 
@@ -1063,7 +1071,7 @@ sub find_child() {
 
 	my ($self, $node, $flags, $data) = (shift, shift, shift, shift);
 
-	if(!(defined($node))) {
+	if(!defined($node)) {
 		return(undef);
 	}
 	if(!($flags <= $TRAVERSE_MASK)) {
