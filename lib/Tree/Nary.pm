@@ -1,12 +1,12 @@
 #####################################################################################
-# $Id: Nary.pm,v 1.0 2000/10/23 08:30:00 soriano Exp $
+# $Id: Nary.pm,v 1.01 2001/02/14 10:32:00 soriano Exp $
 #####################################################################################
 #
 # Tree::Nary
 #
 # Author: Frederic Soriano <frederic.soriano@alcatel.fr>
-# RCS Revision: $Revision: 1.0 $
-# Date: $Date: 2000/10/23 08:30:00 $
+# RCS Revision: $Revision: 1.01 $
+# Date: $Date: 2001/02/14 10:32:00 $
 #
 #####################################################################################
 #
@@ -23,7 +23,7 @@ require Exporter;
 
 @ISA = qw(Exporter);
 
-$VERSION = '1.0';
+$VERSION = '1.01';
 
 use strict;
 use vars qw($TRUE $FALSE);
@@ -166,7 +166,7 @@ sub is_leaf() {
 	return($node->{children} == undef);
 }
 
-# Returns TRUE if $node is an ancesttor of $descendant.
+# Returns TRUE if $node is an ancestor of $descendant.
 # This is true if node is the parent of descendant, or if node is the grandparent of descendant, etc.
 sub is_ancestor() {
 
@@ -175,7 +175,7 @@ sub is_ancestor() {
 	if(!defined($node)) {
 		return($FALSE);
 	}
-	if(defined($descendant)) {
+	if(!defined($descendant)) {
 		return($FALSE);
 	}
 

@@ -113,6 +113,10 @@ sub node_test() {
 	#     of 'F', which will cause 'F' to be the last node visited.
 
 	$tstring = undef;
+
+	print "Check is_ancestor F->G (should be true) :", Tree::Nary->is_ancestor($node_F, $node_G), ". \n";
+	print "Check is_ancestor G->F (should be false):", Tree::Nary->is_ancestor($node_G, $node_F), ". \n";
+
 	Tree::Nary->traverse($root, $Tree::Nary::PRE_ORDER, $Tree::Nary::TRAVERSE_ALL, -1, \&node_build_string, \$tstring);
 	if($tstring =~ /ABCDEFGHIJK/) {
 		print "tstring is ABCDEFGHIJK\n";
