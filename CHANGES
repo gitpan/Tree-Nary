@@ -11,6 +11,10 @@ Revision history for Perl extension Tree::Nary.
         + Added is_ancestor() check in test.pl.
         - Corrected typos in documentation.
 
+1.02    14 Feb 2001
+
+        - Fixed test.pl script to implement ok/not ok outputs.
+
 -----------------------------------------------------------------------------
 + == additions
 - == fixes
