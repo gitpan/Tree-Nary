@@ -1,12 +1,12 @@
 #####################################################################################
-# $Id: Nary.pm,v 1.21 2001/09/24 08:14:00 soriano Exp $
+# $Id: Nary.pm,v 1.3 2004/01/05 10:32:00 soriano Exp $
 #####################################################################################
 #
 # Tree::Nary
 #
 # Author: Frederic Soriano <frederic.soriano@alcatel.fr>
-# RCS Revision: $Revision: 1.21 $
-# Date: $Date: 2001/09/24 08:14:00 $
+# RCS Revision: $Revision: 1.3 $
+# Date: $Date: 2004/01/05 10:32:00 $
 #
 #####################################################################################
 #
@@ -23,7 +23,7 @@ require Exporter;
 
 @ISA = qw(Exporter);
 
-$VERSION = '1.21';
+$VERSION = '1.3';
 
 use strict;
 use vars qw($TRUE $FALSE);
@@ -1134,6 +1134,113 @@ sub children_foreach() {
 	return;
 }
 
+#
+# Sort methods
+#
+
+#_pchild_ref is just gathering references
+sub _pchild_ref() {
+
+	my ($node, $aref) = (shift, shift);
+
+	push @$aref, $node;
+}
+
+# Sort a tree
+sub tsort() {
+
+	my ($self, $node) = (shift, shift);
+	my @back;
+
+	return if($self->is_leaf($node));
+
+	# gather all the children references and sort them
+	# according to the data field backwards (Z Y X W ...)
+	$self->children_foreach($node, $Tree::Nary::TRAVERSE_ALL, \&_pchild_ref, \@back);
+	@back = sort { $b->{data} cmp $a->{data} } @back;
+
+	for (@back) {                # for every reference found (in backward order)
+		$self->unlink($_);         # detach it from parent
+		$self->prepend($node, $_); # prepend it 0> first child
+		$self->tsort($_);          # call tsort recursively for its children
+	}
+}
+
+#
+# Comparison methods
+#
+
+# Generate a normalized tree
+sub normalize() {
+
+	my ($self, $node)   = (shift, shift);
+
+	# Initialize result for a leaf
+	my $result = '*';
+
+	if(!$self->is_leaf($node)) {
+
+		my @childs;
+		my @chldMaps;
+
+		$self->children_foreach($node, $Tree::Nary::TRAVERSE_ALL, \&_pchild_ref, \@childs);
+
+		for(@childs) {
+			push @chldMaps, $self->normalize($_);
+		}
+
+		$result = '('.join('', sort @chldMaps).')';
+	}
+
+	return($result);
+}
+
+# Compares two trees and returns TRUE if they are identical
+# in their structures and their contents
+sub is_identical() {
+
+	my ($self, $t1, $t2) = (shift, shift, shift);
+	my $i;
+	my @t1childs;
+	my @t2childs;
+
+	# Exit if one of them is leaf and the other isn't
+	return($FALSE) if(($self->is_leaf($t1) && !$self->is_leaf($t2)) or
+		(!$self->is_leaf($t1) && $self->is_leaf($t2)));
+
+	# Exit if they have different amount of children
+	return($FALSE) if($self->n_children($t1) != $self->n_children($t2));
+
+	# => HERE BOTH ARE LEAFS OR PARENTS WITH SAME AMOUNT OF CHILDREN
+
+	return($FALSE) if($t1->{data} ne $t2->{data});     # exit if different content
+	return($TRUE)  if($self->is_leaf($t1));              # if T1 is leaf, both are: hey, identical!!
+
+	# => HERE BOTH ARE PARENTS WITH SAME AMOUNT OF CHILDREN
+
+	# get the children references for $t1 and $t2
+	$self->children_foreach($t1, $Tree::Nary::TRAVERSE_ALL, \&_pchild_ref, \@t1childs);
+	$self->children_foreach($t2, $Tree::Nary::TRAVERSE_ALL,\&_pchild_ref, \@t2childs);
+
+	for $i (0 .. scalar(@t1childs)-1) {      # iterate all children by index
+		next if($self->is_identical($t1childs[$i], $t2childs[$i]) == $TRUE);
+		return($FALSE);
+	}
+
+	return($TRUE);
+}
+
+# Compare the structure of two trees by comparing their canonical shapes
+sub has_same_struct() {
+
+	my ($self, $t1, $t2) = (shift, shift, shift);
+	my $t1c = $self->normalize($t1);
+	my $t2c = $self->normalize($t2);
+
+	return($TRUE) if($t1c eq $t2c);      # if the two canons are identical, structure is same
+	return($FALSE);                      # structure is different
+}
+
 1;
 
 __END__
@@ -1147,6 +1254,7 @@ Tree::Nary - Perl implementation of N-ary search trees.
   use Tree::Nary;
 
   $node = new Tree::Nary;
+  $another_node = new Tree::Nary;
 
   $inserted_node = $node->insert($parent, $position, $node);
   $inserted_node = $node->insert_before($parent, $sibling, $node);
@@ -1192,6 +1300,13 @@ Tree::Nary - Perl implementation of N-ary search trees.
   $bool = $node->is_ancestor($node);
 
   $cnt = $obj->max_height($node);
+
+  $node->tsort($node);
+
+  $normalized_node = $node->normalize($node);
+
+  $bool = $node->is_identical($node, $another_node);
+  $bool = $node->has_same_struct($node, $another_node);
 
   $node->unlink($node);
 
@@ -1448,6 +1563,22 @@ distance from NODE to all leaf nodes.
 If NODE is I<undef>, 0 is returned. If NODE has no children, 1 is returned.
 If NODE has children, 2 is returned. And so on.
 
+=head2 tsort( NODE )
+
+Sorts all the children references of NODE according to the data field.
+
+=head2 normalize( NODE )
+
+Returns the normalized shape of NODE.
+
+=head2 is_identical( NODE, ANOTHER_NODE )
+
+Returns TRUE if NODE and ANOTHER_NODE have same structures and contents.
+
+=head2 has_same_struct( NODE, ANOTHER_NODE )
+
+Returns TRUE if the structure of NODE and ANOTHER_NODE are identical.
+
 =head2 unlink( NODE )
 
 Unlinks NODE from a tree, resulting in two separate trees.
@@ -1455,11 +1586,12 @@ The NODE to unlink becomes the root of a new tree.
 
 =head1 EXAMPLES
 
-An example for each function can be found in the test script B<test.pl>.
+An example for each function can be found in the test suite bundled with
+B<Tree::Nary>.
 
 =head1 AUTHOR
 
-Frederic Soriano, <frederic.soriano@alcatel.fr>
+Frederic Soriano, <fsoriano@cpan.org>
 
 =head1 COPYRIGHT
 

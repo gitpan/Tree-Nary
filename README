@@ -2,12 +2,11 @@ Tree::Nary extension module for Perl
 ------------------------------------
 
 Author:		Frederic Soriano [FSORIANO]
-		currently employed at Alcatel Submarine Networks as Systems & Networks Engineer
-		best reached at : frederic.soriano@alcatel.fr
+		best reached at : fsoriano@cpan.org
 
-Version:	1.21
+Version:	1.3
 
-Date:		September 2001
+Date:		January 2004
 
 DSLI:		RdpO
 		- stable release
@@ -80,6 +79,13 @@ SYNOPSIS
   $bool = $node->is_ancestor($node);
 
   $cnt = $obj->max_height($node);
+
+  $node->tsort($node);
+
+  $normalized_node = $node->normalize($node);
+
+  $bool = $node->is_identical($node, $another_node);
+  $bool = $node->has_same_struct($node, $another_node);
 
   $node->unlink($node);
 
@@ -335,6 +341,22 @@ METHODS
 	If NODE is undef, 0 is returned. If NODE has no children, 1 is returned.
 	If NODE has children, 2 is returned. And so on.
 
+	tsort( NODE )
+
+	Sorts all the children references of NODE according to the data field.
+
+	normalize( NODE )
+
+	Returns the normalized shape of NODE.
+
+	is_identical( NODE, ANOTHER_NODE )
+
+	Returns TRUE if NODE and ANOTHER_NODE have same structures and contents.
+
+	has_same_struct( NODE, ANOTHER_NODE )
+
+	Returns TRUE if the structure of NODE and ANOTHER_NODE are identical.
+
 	unlink( NODE )
 
 	Unlinks NODE from a tree, resulting in two separate trees.
@@ -342,11 +364,12 @@ METHODS
 
 EXAMPLES
 
-	An example for each function can be found in the test script test.pl.
+	An example for each function can be found in the test suite bundled with
+	Tree::Nary.
 
 AUTHOR
 
-	Frederic Soriano, <frederic.soriano@alcatel.fr>
+	Frederic Soriano, <fsoriano@cpan.org>
 
 COPYRIGHT
 
